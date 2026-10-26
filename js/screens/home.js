@@ -1,20 +1,16 @@
 import { settings } from '../state/settings.js';
 import { MODES } from '../modes/index.js';
+import { DURATIONS } from '../modes/presets.js';
 import { icons } from '../ui/icons.js';
 import { mountSegmented } from '../ui/components.js';
-
-export const DURATIONS = [30, 60, 90].map((v) => ({ value: v, label: `${v}s` }));
+import { openRunSetup } from '../ui/runSetup.js';
 
 function cardHTML(m) {
-  const playable = Boolean(m.create);
-  const foot = playable
-    ? `<span class="mode-card__cta">Play ${icons.arrow}</span>`
-    : `<span class="badge">${icons.lock}Coming soon</span>`;
-  return `<button type="button" class="mode-card" data-mode="${m.id}" ${playable ? '' : 'disabled'}>
+  return `<button type="button" class="mode-card" data-mode="${m.id}">
     <span class="mode-card__icon">${icons[m.id] ?? ''}</span>
     <span class="mode-card__name">${m.name}</span>
     <span class="mode-card__blurb">${m.blurb}</span>
-    <span class="mode-card__foot">${foot}</span>
+    <span class="mode-card__foot"><span class="mode-card__cta">Configure &amp; play ${icons.arrow}</span></span>
   </button>`;
 }
 
@@ -24,9 +20,10 @@ export function createHomeScreen(el, app) {
 
   grid.addEventListener('click', (e) => {
     const card = e.target.closest('[data-mode]');
-    if (!card || card.disabled) return;
-    settings.set('run.mode', card.dataset.mode);
-    app.go('play', { mode: card.dataset.mode });
+    if (!card) return;
+    const mode = MODES.find((m) => m.id === card.dataset.mode);
+    settings.set('run.mode', mode.id);
+    openRunSetup(mode, () => app.go('play', { mode: mode.id }));
   });
 
   el.querySelector('[data-action="quick-start"]').addEventListener('click', () => {

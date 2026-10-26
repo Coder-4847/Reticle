@@ -1,6 +1,7 @@
 import { settings, motionLevel } from './state/settings.js';
 import { audio } from './engine/audio.js';
 import { hydrateIcons } from './ui/icons.js';
+import { backgroundImage } from './ui/backgrounds.js';
 import { createHomeScreen } from './screens/home.js';
 import { createPlayScreen } from './screens/play.js';
 import { createResultsScreen } from './screens/results.js';
@@ -62,6 +63,7 @@ const app = {
 function boot() {
   hydrateIcons();
   applyTheme();
+  backgroundImage.load();
   settings.subscribe((path) => {
     if (path.startsWith('ui')) applyTheme();
   });

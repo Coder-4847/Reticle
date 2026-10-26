@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="css/tokens.css" />
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/controls.css" />
     <link rel="stylesheet" href="css/screens.css" />
+    <link rel="stylesheet" href="css/play.css" />
+    <link rel="stylesheet" href="css/pages.css" />
+    <link rel="stylesheet" href="css/settings.css" />
   </head>
   <body data-screen="home">
     <header class="topbar">
@@ -51,13 +55,13 @@
       <section class="screen screen--play" data-screen="play" aria-label="Training run" tabindex="-1">
         <canvas class="play__canvas" aria-label="Play area"></canvas>
         <div class="hud" data-hud>
-          <div class="hud__bar"><span class="hud__bar-fill" data-hud-el="bar"></span></div>
+          <div class="hud__bar"><span class="hud__bar-fill" data-hud-bar></span></div>
           <div class="hud__row">
-            <div class="hud__stat"><span class="hud__label">Score</span><span class="hud__value" data-hud-el="score">0</span></div>
-            <div class="hud__stat"><span class="hud__label">Hits</span><span class="hud__value" data-hud-el="hits">0</span></div>
-            <div class="hud__stat hud__stat--time"><span class="hud__label">Time</span><span class="hud__value" data-hud-el="time">0.0</span></div>
-            <div class="hud__stat"><span class="hud__label">Accuracy</span><span class="hud__value" data-hud-el="acc">—</span></div>
-            <div class="hud__stat"><span class="hud__label">Misses</span><span class="hud__value" data-hud-el="misses">0</span></div>
+            <div class="hud__stat" data-slot="a"><span class="hud__label"></span><span class="hud__value">0</span></div>
+            <div class="hud__stat" data-slot="b"><span class="hud__label"></span><span class="hud__value">0</span></div>
+            <div class="hud__stat hud__stat--time" data-slot="time"><span class="hud__label"></span><span class="hud__value">0.0</span></div>
+            <div class="hud__stat" data-slot="c"><span class="hud__label"></span><span class="hud__value">—</span></div>
+            <div class="hud__stat" data-slot="d"><span class="hud__label"></span><span class="hud__value">0</span></div>
           </div>
         </div>
         <div class="countdown" data-countdown aria-live="assertive"></div>
@@ -65,7 +69,7 @@
         <div class="overlay" data-pause>
           <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="pause-title">
             <h2 class="dialog__title" id="pause-title">Paused</h2>
-            <p class="dialog__sub">Press <kbd>Esc</kbd> to resume.</p>
+            <p class="dialog__sub" data-pause-sub>Press <kbd>Esc</kbd> to resume.</p>
             <div class="dialog__actions">
               <button class="btn btn--primary btn--block" data-action="resume">Resume</button>
               <button class="btn btn--block" data-action="restart"><span data-icon="retry"></span>Restart</button>
@@ -84,17 +88,10 @@
           </header>
           <div class="card results__card">
             <div class="results__score">
-              <span class="eyebrow">Score</span>
+              <span class="eyebrow" data-r="scoreLabel">Score</span>
               <span class="results__score-value" data-r="score">0</span>
             </div>
-            <div class="stat-grid">
-              <div class="stat"><span class="stat__label">Accuracy</span><span class="stat__value"><span data-r="accuracy">0</span><span class="stat__unit">%</span></span></div>
-              <div class="stat"><span class="stat__label">Avg reaction</span><span class="stat__value"><span data-r="avgRT">0</span><span class="stat__unit">ms</span></span></div>
-              <div class="stat"><span class="stat__label">Hits</span><span class="stat__value" data-r="hits">0</span></div>
-              <div class="stat"><span class="stat__label">Misses</span><span class="stat__value" data-r="misses">0</span></div>
-              <div class="stat"><span class="stat__label">Missed targets</span><span class="stat__value" data-r="expired">0</span></div>
-              <div class="stat"><span class="stat__label">Shots</span><span class="stat__value" data-r="shots">0</span></div>
-            </div>
+            <div class="stat-grid" data-r="grid"></div>
           </div>
           <div class="results__actions">
             <button class="btn btn--primary btn--lg" data-action="retry"><span data-icon="retry"></span>Retry</button>

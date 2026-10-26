@@ -22,6 +22,7 @@ export function createRecorder({ mode, settings, duration }) {
   return {
     run,
     targetSpawned({ id, x, y, r, spawn, life = null }) {
+      life = life || null;
       const rec = {
         id, spawn: r1(spawn), x: r1(x), y: r1(y), r: r1(r), life,
         hit: false, hitT: null, rt: null, cx: null, cy: null, dist: null, endT: null,
@@ -29,13 +30,13 @@ export function createRecorder({ mode, settings, duration }) {
       byId.set(id, rec);
       run.targets.push(rec);
     },
-    targetHit(id, t, x, y, dist) {
+    targetHit(id, t, x, y, dist, rt = null) {
       const rec = byId.get(id);
       if (!rec) return;
       rec.hit = true;
       rec.hitT = r1(t);
       rec.endT = rec.hitT;
-      rec.rt = r1(t - rec.spawn);
+      rec.rt = r1(rt ?? t - rec.spawn);
       rec.cx = r1(x);
       rec.cy = r1(y);
       rec.dist = r1(dist);

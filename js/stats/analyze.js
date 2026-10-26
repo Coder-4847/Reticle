@@ -27,7 +27,7 @@ export function summarize(run) {
     else if (t.endT !== null) expired++;
   }
   const sum = rts.reduce((a, b) => a + b, 0);
-  return {
+  const out = {
     score,
     hits,
     shots,
@@ -38,4 +38,42 @@ export function summarize(run) {
     bestRT: rts.length ? Math.min(...rts) : null,
     worstRT: rts.length ? Math.max(...rts) : null,
   };
+  if (run.track) {
+    const errs = [];
+    for (let i = 1; i < run.track.samples.length; i += 3) if (run.track.samples[i] >= 0) errs.push(run.track.samples[i]);
+    out.score = run.track.score;
+    out.accuracy = run.elapsed ? run.track.onMs / run.elapsed : 0;
+    out.onMs = run.track.onMs;
+    out.avgError = errs.length ? errs.reduce((a, b) => a + b, 0) / errs.length : null;
+  }
+  return out;
+}
+
+/** The headline numbers for a run, as display rows. */
+export function resultRows(run, sum) {
+  if (run.mode === 'tracking') {
+    return [
+      { label: 'On target', value: sum.accuracy * 100, decimals: 1, unit: '%' },
+      { label: 'Time on target', value: sum.onMs / 1000, decimals: 1, unit: 's' },
+      { label: 'Avg error', value: sum.avgError ?? NaN, unit: 'px' },
+    ];
+  }
+  if (run.mode === 'reaction') {
+    return [
+      { label: 'Average', value: sum.avgRT ?? NaN, unit: 'ms' },
+      { label: 'Best', value: sum.bestRT ?? NaN, unit: 'ms' },
+      { label: 'Worst', value: sum.worstRT ?? NaN, unit: 'ms' },
+      { label: 'Trials', value: sum.hits },
+      { label: 'False starts', value: sum.misses },
+      { label: 'Accuracy', value: sum.accuracy * 100, decimals: 1, unit: '%' },
+    ];
+  }
+  return [
+    { label: 'Accuracy', value: sum.accuracy * 100, decimals: 1, unit: '%' },
+    { label: 'Avg reaction', value: sum.avgRT ?? NaN, unit: 'ms' },
+    { label: 'Hits', value: sum.hits },
+    { label: 'Misses', value: sum.misses },
+    { label: 'Missed targets', value: sum.expired },
+    { label: 'Shots', value: sum.shots },
+  ];
 }

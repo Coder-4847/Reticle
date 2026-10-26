@@ -1,4 +1,4 @@
-import { summarize } from '../stats/analyze.js';
+import { summarize, resultRows } from '../stats/analyze.js';
 import { countUp } from '../ui/components.js';
 import { MODES } from '../modes/index.js';
 import { listRuns } from '../state/store.js';
@@ -18,14 +18,15 @@ export function createResultsScreen(el, app) {
     run = r;
     const sum = summarize(r);
     const modeName = MODES.find((m) => m.id === r.mode)?.name ?? r.mode;
-    f.meta.textContent = `${modeName} · ${Math.round(r.duration / 1000)}s`;
-    countUp(f.score, sum.score, { duration: 1100 });
-    countUp(f.accuracy, sum.accuracy * 100, { decimals: 1, delay: 80 });
-    countUp(f.avgRT, sum.avgRT ?? NaN, { delay: 120 });
-    countUp(f.hits, sum.hits, { delay: 160 });
-    countUp(f.misses, sum.misses, { delay: 200 });
-    countUp(f.expired, sum.expired, { delay: 240 });
-    countUp(f.shots, sum.shots, { delay: 280 });
+    const length = r.duration ? `${Math.round(r.duration / 1000)}s` : `${r.targets.length} trials`;
+    f.meta.textContent = `${modeName} · ${length}`;
+    f.scoreLabel.textContent = r.mode === 'tracking' ? 'Score (% on target)' : 'Score';
+    countUp(f.score, sum.score, { duration: 1100, decimals: r.mode === 'tracking' ? 1 : 0 });
+    const rows = resultRows(r, sum);
+    f.grid.innerHTML = rows
+      .map((row) => `<div class="stat"><span class="stat__label">${row.label}</span><span class="stat__value"><span data-v></span>${row.unit && Number.isFinite(row.value) ? `<span class="stat__unit">${row.unit}</span>` : ''}</span></div>`)
+      .join('');
+    f.grid.querySelectorAll('[data-v]').forEach((node, i) => countUp(node, rows[i].value, { decimals: rows[i].decimals ?? 0, delay: 80 + i * 40 }));
   }
 
   return {
