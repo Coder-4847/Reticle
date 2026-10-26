@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="css/play.css" />
     <link rel="stylesheet" href="css/pages.css" />
     <link rel="stylesheet" href="css/settings.css" />
+    <link rel="stylesheet" href="css/results.css" />
+    <link rel="stylesheet" href="css/report.css" />
+    <link rel="stylesheet" href="css/stats.css" />
   </head>
   <body data-screen="home">
     <header class="topbar">
@@ -83,20 +86,29 @@
       <section class="screen" data-screen="results" aria-label="Results" tabindex="-1">
         <div class="results">
           <header class="results__head">
+            <button type="button" class="btn btn--ghost btn--sm results__back" data-action="back" hidden>← Back to stats</button>
             <p class="eyebrow" data-r="meta"></p>
-            <h1 class="results__title">Run complete</h1>
+            <h1 class="results__title" data-r="title">Run complete</h1>
           </header>
           <div class="card results__card">
-            <div class="results__score">
-              <span class="eyebrow" data-r="scoreLabel">Score</span>
-              <span class="results__score-value" data-r="score">0</span>
+            <div class="results__top">
+              <div class="results__score">
+                <span class="eyebrow" data-r="scoreLabel">Score</span>
+                <span class="results__score-row"><span class="results__score-value" data-r="score">0</span><span class="pb" data-pb="score" hidden>New PB</span></span>
+              </div>
+              <figure class="results__spark" data-r="spark">
+                <figcaption data-r="sparkLabel"></figcaption>
+                <div class="chart"><canvas data-r="sparkCanvas" aria-hidden="true"></canvas></div>
+              </figure>
             </div>
             <div class="stat-grid" data-r="grid"></div>
           </div>
           <div class="results__actions">
             <button class="btn btn--primary btn--lg" data-action="retry"><span data-icon="retry"></span>Retry</button>
-            <button class="btn btn--lg" data-action="home">Home</button>
+            <button class="btn btn--lg" data-action="expand" aria-expanded="false" aria-controls="results-detail"><span data-r="expandLabel">Expand full report</span><span class="chev" aria-hidden="true"></span></button>
+            <button class="btn btn--ghost btn--lg" data-action="home">Home</button>
           </div>
+          <div class="results__detail" id="results-detail" data-r="detail"></div>
         </div>
       </section>
 

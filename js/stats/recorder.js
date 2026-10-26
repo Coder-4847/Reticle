@@ -30,7 +30,8 @@ export function createRecorder({ mode, settings, duration }) {
       byId.set(id, rec);
       run.targets.push(rec);
     },
-    targetHit(id, t, x, y, dist, rt = null) {
+    /** (tx, ty) is the target's center at hit time (targets can move). */
+    targetHit(id, t, x, y, dist, rt = null, tx = null, ty = null) {
       const rec = byId.get(id);
       if (!rec) return;
       rec.hit = true;
@@ -40,14 +41,22 @@ export function createRecorder({ mode, settings, duration }) {
       rec.cx = r1(x);
       rec.cy = r1(y);
       rec.dist = r1(dist);
+      rec.hx = tx === null ? rec.x : r1(tx);
+      rec.hy = ty === null ? rec.y : r1(ty);
     },
     targetExpired(id, t) {
       const rec = byId.get(id);
       if (rec && rec.endT === null) rec.endT = r1(t);
     },
-    /** target: id that was hit, or the nearest live target on a miss (null if none). */
-    shot(t, x, y, hit, target, dist, pts) {
-      run.shots.push({ t: r1(t), x: r1(x), y: r1(y), hit, target, dist: dist === null ? null : r1(dist), pts });
+    /**
+     * target: id that was hit, or the nearest live target on a miss (null if none).
+     * (tx, ty): that target's center at the moment of the shot.
+     */
+    shot(t, x, y, hit, target, dist, pts, tx = null, ty = null) {
+      run.shots.push({
+        t: r1(t), x: r1(x), y: r1(y), hit, target, dist: dist === null ? null : r1(dist), pts,
+        tx: tx === null ? null : r1(tx), ty: ty === null ? null : r1(ty),
+      });
     },
     finish({ elapsed, area, completed = true }) {
       run.elapsed = r1(elapsed);

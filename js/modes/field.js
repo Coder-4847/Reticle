@@ -138,7 +138,7 @@ export function createField(game, opts) {
     const dist = Math.hypot(x - tg.x, y - tg.y);
     const rt = Math.max(0, t - (opts.killTime ? Math.max(tg.spawn, lastHitT) : tg.spawn));
     lastHitT = t;
-    if (opts.record !== false) game.recorder.targetHit(tg.id, t, x, y, dist, rt);
+    if (opts.record !== false) game.recorder.targetHit(tg.id, t, x, y, dist, rt, tg.x, tg.y);
     remove(tg, 'hit', t);
     game.burst(tg.x, tg.y, look.hitColor);
     return { rt, dist };
@@ -149,13 +149,15 @@ export function createField(game, opts) {
     field.advance(t);
     const tg = field.hitTest(x, y, t);
     if (tg) {
+      const tx = tg.x;
+      const ty = tg.y;
       const { rt, dist } = field.hit(tg, t, x, y);
       const pts = scoreHit(rt, refMs);
-      game.recorder.shot(t, x, y, true, tg.id, dist, pts);
+      game.recorder.shot(t, x, y, true, tg.id, dist, pts, tx, ty);
       return { hit: true, pts };
     }
     const near = field.nearest(x, y);
-    game.recorder.shot(t, x, y, false, near ? near.tg.id : null, near ? near.dist : null, MISS_POINTS);
+    game.recorder.shot(t, x, y, false, near?.tg.id ?? null, near?.dist ?? null, MISS_POINTS, near?.tg.x ?? null, near?.tg.y ?? null);
     return { hit: false, pts: MISS_POINTS };
   };
 

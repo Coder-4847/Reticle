@@ -135,6 +135,12 @@ export const settings = {
     save();
     notify(path, parent[last]);
   },
+  /** Replace every setting (validated). Subscribers get path '*'. */
+  replaceAll(value) {
+    data = conform(DEFAULTS, value);
+    save();
+    notify('*', data);
+  },
   snapshot() {
     return clone(data);
   },

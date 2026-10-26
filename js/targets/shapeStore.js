@@ -40,6 +40,10 @@ export const shapeStore = {
     shapes = shapes.map((s) => (s.id === id ? { ...s, name: name.trim().slice(0, 24) || s.name } : s));
     commit();
   },
+  replaceAll(list) {
+    shapes = (Array.isArray(list) ? list : []).filter(valid).slice(0, MAX_SHAPES);
+    commit();
+  },
   remove(id) {
     shapes = shapes.filter((s) => s.id !== id);
     commit();

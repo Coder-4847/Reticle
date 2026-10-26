@@ -53,15 +53,15 @@ export function createSwitching(game) {
         const dist = Math.hypot(x - tg.x, y - tg.y);
         const rt = Math.max(0, t - since);
         const pts = scoreHit(rt, c.lifetime || 1000);
-        rec.targetHit(actId, t, x, y, dist, rt);
-        rec.shot(t, x, y, true, actId, dist, pts);
+        rec.targetHit(actId, t, x, y, dist, rt, tg.x, tg.y);
+        rec.shot(t, x, y, true, actId, dist, pts, tg.x, tg.y);
         field.hit(tg, t, x, y);
         activate(t, null);
         field.advance(t); // spawn the replacement (it starts inactive)
         return { hit: true, pts };
       }
       const dist = active ? Math.hypot(x - active.x, y - active.y) : null;
-      rec.shot(t, x, y, false, active ? actId : null, dist, MISS_POINTS);
+      rec.shot(t, x, y, false, active ? actId : null, dist, MISS_POINTS, active?.x ?? null, active?.y ?? null);
       return { hit: false, pts: MISS_POINTS };
     },
     draw(ctx, t) {

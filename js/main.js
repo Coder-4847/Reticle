@@ -65,7 +65,7 @@ function boot() {
   applyTheme();
   backgroundImage.load();
   settings.subscribe((path) => {
-    if (path.startsWith('ui')) applyTheme();
+    if (path === '*' || path.startsWith('ui')) applyTheme();
   });
 
   const el = (name) => document.querySelector(`.screen[data-screen="${name}"]`);
