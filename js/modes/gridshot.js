@@ -37,5 +37,6 @@ export function createGridshot(game) {
     },
     shot: (x, y, t) => field.clickShot(x, y, t, 900),
     draw: (ctx, t) => field.draw(ctx, t),
+    onResize: () => field.clampAll(),
   };
 }

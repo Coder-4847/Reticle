@@ -2,6 +2,12 @@ import { settings, motionLevel } from './state/settings.js';
 import { audio } from './engine/audio.js';
 import { hydrateIcons } from './ui/icons.js';
 import { backgroundImage } from './ui/backgrounds.js';
+import { profiles, profilesWereReset } from './state/profiles.js';
+import { mountProfileMenu } from './ui/profileMenu.js';
+import { installShortcuts, openCheatSheet } from './ui/shortcuts.js';
+import { needsOnboarding, openOnboarding } from './ui/onboarding.js';
+import { checkEnvironment } from './ui/notices.js';
+import { toast } from './ui/toast.js';
 import { createHomeScreen } from './screens/home.js';
 import { createPlayScreen } from './screens/play.js';
 import { createResultsScreen } from './screens/results.js';
@@ -79,11 +85,31 @@ function boot() {
   document.addEventListener('click', (e) => {
     const nav = e.target.closest('[data-nav]');
     if (nav) app.go(nav.dataset.nav);
+    if (e.target.closest('[data-action="shortcuts"]')) openCheatSheet();
+  });
+
+  profiles.init();
+  mountProfileMenu(document.querySelector('[data-profile-menu]'), { onManage: () => app.go('settings', { tab: 'profiles' }) });
+  installShortcuts(() => document.body.dataset.screen, {
+    home: {
+      Space: () => screens.home.quickStart(),
+      Enter: () => screens.home.quickStart(),
+      ...Object.fromEntries([1, 2, 3, 4, 5].map((n) => [String(n), () => screens.home.pickMode(n - 1)])),
+    },
+    results: {
+      Space: () => screens.results.retry(),
+      Enter: () => screens.results.retry(),
+      r: () => screens.results.retry(),
+    },
+    '*': { s: () => app.go('settings') },
   });
   // Browsers only allow audio after a user gesture.
   window.addEventListener('pointerdown', () => audio.unlock(), { once: true, capture: true });
 
   app.go('home');
+  if (settings.wasReset || profilesWereReset) toast('Some saved data could not be read and was reset to defaults.', { tone: 'error', duration: 6000 });
+  if (needsOnboarding()) setTimeout(() => openOnboarding(), 350);
+  checkEnvironment();
 }
 
 boot();

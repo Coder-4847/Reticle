@@ -7,7 +7,9 @@ import { createParticles } from '../engine/particles.js';
 import { audio } from '../engine/audio.js';
 import { easeOutCubic } from '../engine/ease.js';
 import { drawCrosshair, drawHitMarker } from '../ui/crosshair.js';
-import { createHud, DEFAULT_LABELS } from '../ui/hud.js';
+import { createHud } from '../ui/hud.js';
+import { createFx } from '../engine/fx.js';
+import { createPlayfield } from '../engine/playfield.js';
 import { createTrail, trailColor } from '../ui/trail.js';
 import { createBackground } from '../ui/backgrounds.js';
 import { getLook } from '../targets/render.js';
@@ -20,7 +22,7 @@ const HUD_INSET = 84; // px kept clear at the top so targets never sit under the
 const EDGE = 24;
 const PULSE_MS = 140;
 const MARKER_MS = 180;
-const HUD_EVERY_MS = 100;
+const MISS_COLOR = '#ff5d6c';
 
 export function createPlayScreen(el, app) {
   const canvas = el.querySelector('canvas');
@@ -35,31 +37,13 @@ export function createPlayScreen(el, app) {
   const pauseSub = el.querySelector('[data-pause-sub]');
   const clock = createClock();
   const loop = createLoop({ update, render });
-  const full = { x: 0, y: 0, w: 0, h: 0 };
-  const box = { x: 0, y: 0, w: 0, h: 0 };
-  const view = { w: 0, h: 0 };
-  const hudOut = {};
+  const field = createPlayfield(renderer, { top: HUD_INSET, edge: EDGE });
+  const fx = createFx();
+  const fps = { frames: 0, since: 0 };
   let s = null; // current session
   let countTimer = 0;
 
-  function playArea() {
-    full.x = EDGE;
-    full.y = HUD_INSET;
-    full.w = Math.max(0, renderer.width - EDGE * 2);
-    full.h = Math.max(0, renderer.height - HUD_INSET - EDGE);
-    if (s?.config.area !== 'box') return full;
-    box.w = Math.min(full.w, Math.max(320, full.w * 0.55));
-    box.h = Math.min(full.h, Math.max(240, full.h * 0.6));
-    box.x = full.x + (full.w - box.w) / 2;
-    box.y = full.y + (full.h - box.h) / 2;
-    return box;
-  }
-
-  function viewSize() {
-    view.w = renderer.width;
-    view.h = renderer.height;
-    return view;
-  }
+  const playArea = () => field.area(s?.config.area);
 
   function newSession(modeId) {
     const def = getMode(modeId);
@@ -69,32 +53,37 @@ export function createPlayScreen(el, app) {
     const duration = def.timed === false ? null : snap.run.duration * 1000;
     s = {
       def, snap, config, motion, duration,
-      phase: 'ready', prevPhase: null, lastCount: null, pausedAt: 0, hudT: -1e9, tenths: -1,
-      score: 0, hits: 0, shots: 0, pulseT: -1e9, markerT: -1e9,
+      phase: 'ready', prevPhase: null, lastCount: null, pausedAt: 0,
+      score: 0, hits: 0, shots: 0, streak: 0, pulseT: -1e9, markerT: -1e9,
+      fx: motion === 'off' ? {} : snap.effects,
       lockWanted: snap.pointer.lock,
       trailColor: trailColor(snap),
       recorder: createRecorder({ mode: def.id, settings: snap, duration }),
     };
+    s.look = getLook(snap, renderer.dpr);
     s.mode = def.create({
       settings: snap,
       config,
       motion,
-      look: getLook(snap, renderer.dpr),
+      effects: s.fx,
+      look: s.look,
       recorder: s.recorder,
       pointer: input.state,
       area: playArea,
-      view: viewSize,
-      burst(x, y, color) {
-        if (motion !== 'off') particles.burst(x, y, motion === 'full' ? 16 : 6, color);
+      view: field.view,
+      burst(x, y, color, r = 20) {
+        if (s.fx.hitBurst) particles.burst(x, y, motion === 'full' ? 16 : 6, color);
+        if (s.fx.fragments && motion === 'full') fx.fragments(x, y, r, color, performance.now());
       },
       onSpawn: () => audio.play('spawn'),
     });
     input.configure({ lock: snap.pointer.lock, sens: snap.pointer.sensitivity });
     particles.clear();
     trail.clear();
-    hud.configure(s.mode.hudLabels ?? DEFAULT_LABELS);
-    updateStats();
-    updateTime(0);
+    fx.clear();
+    hud.begin(s.mode.hudLabels, { timerBar: snap.effects.timerBar, fps: snap.ui.fps });
+    hud.stats(s);
+    hud.time(s, 0);
     setPaused(false);
     loop.start();
     if (s.lockWanted && !input.state.locked) {
@@ -127,36 +116,6 @@ export function createPlayScreen(el, app) {
 
   const runTime = () => clock.now() - COUNTDOWN_MS;
 
-  function updateStats() {
-    if (s.mode.hud) return;
-    hud.set('a', s.score.toLocaleString());
-    hud.set('b', String(s.hits));
-    hud.set('c', s.shots ? `${Math.round((s.hits / s.shots) * 100)}%` : '—');
-    hud.set('d', String(s.shots - s.hits));
-  }
-
-  function updateTime(t) {
-    if (s.mode.hud && performance.now() - s.hudT >= HUD_EVERY_MS) {
-      s.hudT = performance.now();
-      hudOut.time = undefined;
-      hudOut.progress = undefined;
-      s.mode.hud(hudOut, t);
-      for (const k of ['a', 'b', 'c', 'd']) if (hudOut[k] !== undefined) hud.set(k, hudOut[k]);
-      if (s.duration === null) {
-        hud.set('time', hudOut.time ?? '');
-        hud.progress(hudOut.progress ?? 1);
-      }
-    }
-    if (s.duration === null) return;
-    const remaining = Math.min(s.duration, Math.max(0, s.duration - Math.max(0, t)));
-    const tenths = Math.ceil(remaining / 100);
-    if (tenths !== s.tenths) {
-      s.tenths = tenths;
-      hud.set('time', (tenths / 10).toFixed(1));
-    }
-    hud.progress(remaining / s.duration);
-  }
-
   function update(step) {
     if (!s || (s.phase !== 'countdown' && s.phase !== 'running')) return;
     const t = runTime();
@@ -184,6 +143,7 @@ export function createPlayScreen(el, app) {
     }
     s.mode.update(t, step);
     particles.update(step);
+    fx.update(step);
   }
 
   function render() {
@@ -196,9 +156,14 @@ export function createPlayScreen(el, app) {
     if (!s) return;
     const t = runTime();
     const started = s.phase === 'running' || s.phase === 'done' || (s.phase === 'paused' && s.prevPhase === 'running');
+    const shake = fx.shakeOffset(now);
+    ctx.translate(shake.x, shake.y);
     if (started) s.mode.draw(ctx, s.duration === null ? t : Math.min(t, s.duration));
     particles.draw(ctx);
-    if (s.phase !== 'ready') updateTime(started ? t : 0);
+    fx.draw(ctx, now, s.look);
+    ctx.translate(-shake.x, -shake.y);
+    if (s.phase !== 'ready') hud.time(s, started ? t : 0);
+    if (s.snap.ui.fps) countFrame(now);
     if (s.snap.trail.enabled) trail.draw(ctx, now, s.snap.trail, s.trailColor);
     const p = input.state;
     if (p.inside && s.phase !== 'paused') {
@@ -226,13 +191,29 @@ export function createPlayScreen(el, app) {
     s.shots++;
     if (res.hit) s.hits++;
     s.score = applyPoints(s.score, res.pts);
+    s.streak = res.hit ? s.streak + 1 : 0;
     const fb = s.snap.pointer.hitFeedback;
-    if (!res.hit) audio.play('miss');
-    else {
+    const now = performance.now();
+    if (s.fx.clickPing) fx.ping(e.x, e.y, s.snap.crosshair.color, now);
+    if (!res.hit) {
+      audio.play('miss');
+      if (s.fx.missRipple) fx.ripple(e.x, e.y, MISS_COLOR, now);
+      if (s.fx.screenShake) fx.shake(now, 3);
+    } else {
       if (fb === 'sound' || fb === 'both') audio.play('hit');
-      if (fb === 'flash' || fb === 'both') s.markerT = performance.now();
+      if (fb === 'flash' || fb === 'both') s.markerT = now;
     }
-    updateStats();
+    if (s.fx.streak) hud.streak(s.streak);
+    hud.stats(s);
+  }
+
+  function countFrame(now) {
+    fps.frames++;
+    if (now - fps.since >= 500) {
+      hud.fps(Math.round((fps.frames * 1000) / (now - fps.since)));
+      fps.frames = 0;
+      fps.since = now;
+    }
   }
 
   function pause() {
@@ -278,7 +259,13 @@ export function createPlayScreen(el, app) {
   }
 
   function onKey(e) {
-    if (e.key !== 'Escape' || e.repeat) return;
+    if (e.repeat) return;
+    if ((e.key === 'r' || e.key === 'R') && s && s.phase !== 'done' && !e.target.closest?.('input')) {
+      e.preventDefault();
+      newSession(s.def.id);
+      return;
+    }
+    if (e.key !== 'Escape') return;
     e.preventDefault();
     // Leaving pointer lock with Esc already paused us; don't treat the same press as "resume".
     if (s?.phase === 'paused') {
@@ -292,6 +279,7 @@ export function createPlayScreen(el, app) {
   const onVisibility = () => document.hidden && pause();
 
   input.on('down', onDown);
+  renderer.onResize(() => s?.mode.onResize?.());
   input.on('move', (e) => {
     if (s?.snap.trail.enabled) trail.push(e.x, e.y, e.t);
   });

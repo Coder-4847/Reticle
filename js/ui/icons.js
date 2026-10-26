@@ -10,6 +10,7 @@ export const icons = {
   play: svg('<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>'),
   retry: svg('<path d="M4 12a8 8 0 1 0 2.5-5.8L4 8.5"/><path d="M4 4v4.5h4.5"/>'),
   lock: svg('<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+  keyboard: svg('<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>'),
   arrow: svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
   flick: svg('<circle cx="16" cy="8" r="4.5"/><circle cx="16" cy="8" r="1" fill="currentColor"/><path d="M4 20 11.5 12.5M11.5 12.5H7M11.5 12.5V17"/>'),
   gridshot: svg('<circle cx="6.5" cy="7" r="3"/><circle cx="17.5" cy="7" r="3"/><circle cx="12" cy="17" r="3"/>'),

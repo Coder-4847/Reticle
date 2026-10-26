@@ -5,6 +5,7 @@ import { createPreview } from '../ui/preview.js';
 import { encodeCrosshair, decodeCrosshair } from '../ui/crosshair.js';
 import { backgroundImage } from '../ui/backgrounds.js';
 import { mountShapePicker } from '../targets/shapePicker.js';
+import { mountProfileManager } from '../ui/profileManager.js';
 import { SECTIONS } from './settingsSections.js';
 
 // Custom rows that aren't a single bound control.
@@ -89,6 +90,32 @@ const CUSTOM = {
     return mountShapePicker(slot);
   },
 
+  profiles: mountProfileManager,
+
+  cbPresets(slot) {
+    const PAIRS = [
+      { name: 'Amber · Sky', color: '#e69f00', hit: '#56b4e9' },
+      { name: 'Sky · Vermillion', color: '#56b4e9', hit: '#d55e00' },
+      { name: 'Yellow · Purple', color: '#f0e442', hit: '#cc79a7' },
+      { name: 'Blue · Orange', color: '#0072b2', hit: '#e69f00' },
+    ];
+    slot.innerHTML = `<div class="cb-presets">${PAIRS.map((p, i) => `<button type="button" class="cb-preset" data-i="${i}"><span class="cb-preset__swatch" style="--a:${p.color};--b:${p.hit}"></span>${p.name}</button>`).join('')}</div>`;
+    const buttons = [...slot.querySelectorAll('.cb-preset')];
+    slot.addEventListener('click', (e) => {
+      const b = e.target.closest('.cb-preset');
+      if (!b) return;
+      const p = PAIRS[Number(b.dataset.i)];
+      settings.set('targets.color', p.color);
+      settings.set('targets.hitColor', p.hit);
+      settings.set('targets.colorMode', 'states');
+    });
+    const sync = () => {
+      const t = settings.get('targets');
+      buttons.forEach((b, i) => b.setAttribute('aria-pressed', String(t.colorMode === 'states' && t.color === PAIRS[i].color && t.hitColor === PAIRS[i].hit)));
+    };
+    return { sync };
+  },
+
   audioTest(slot) {
     slot.innerHTML = `<div class="btn-row">${['hit', 'miss', 'spawn', 'count']
       .map((s) => `<button type="button" class="btn btn--sm" data-sound="${s}">${s === 'count' ? 'Countdown' : s[0].toUpperCase() + s.slice(1)}</button>`)
@@ -135,13 +162,14 @@ export function createSettingsScreen(el) {
     panel.innerHTML = `
       <header class="panel__head">
         <h2 class="panel__title">${section.title}</h2>
-        <button type="button" class="btn btn--ghost btn--sm" data-action="reset">Reset to default</button>
+        ${section.reset.length ? '<button type="button" class="btn btn--ghost btn--sm" data-action="reset">Reset to default</button>' : ''}
       </header>
       <div class="panel__rows"></div>`;
     panel.classList.remove('is-entering');
     void panel.offsetWidth; // restart the entrance animation
     panel.classList.add('is-entering');
-    panel.querySelector('[data-action="reset"]').onclick = () => section.reset.forEach((p) => settings.resetSection(p));
+    const reset = panel.querySelector('[data-action="reset"]');
+    if (reset) reset.onclick = () => section.reset.forEach((p) => settings.resetSection(p));
     form = buildRows(panel.querySelector('.panel__rows'), section.rows, { custom: CUSTOM });
     preview.showSwatches(Boolean(section.swatchPreview));
   }
@@ -162,8 +190,9 @@ export function createSettingsScreen(el) {
   show(active);
   return {
     el,
-    enter() {
-      form?.sync();
+    enter({ tab } = {}) {
+      if (tab && tab !== active) show(tab);
+      else form?.sync();
       preview.start();
     },
     leave() {

@@ -193,88 +193,6 @@
     conic-gradient(#ff5d5d, #ffd05d, #6aff5d, #5dfff0, #5d6aff, #ff5df0, #ff5d5d);
 }
 
-/* Color picker popover */
-.cp {
-  position: fixed;
-  z-index: 60;
-  display: grid;
-  gap: var(--s-3);
-  width: 232px;
-  padding: var(--s-3);
-  border-radius: var(--r-lg);
-  background: var(--bg-2);
-  box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow-3);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-4px) scale(0.98);
-  transition:
-    opacity var(--dur-2) var(--ease-out),
-    transform var(--dur-2) var(--ease-out),
-    visibility 0s linear var(--dur-2);
-}
-
-.cp.is-open {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
-}
-
-.cp__sv,
-.cp__hue {
-  position: relative;
-  border-radius: var(--r-sm);
-  cursor: crosshair;
-  touch-action: none;
-}
-
-.cp__sv {
-  height: 140px;
-  background:
-    linear-gradient(to top, #000, transparent),
-    linear-gradient(to right, #fff, transparent),
-    var(--hue);
-}
-
-.cp__hue {
-  height: 12px;
-  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
-}
-
-.cp__knob {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color);
-  box-shadow: 0 0 0 2px #fff, 0 1px 4px rgb(0 0 0 / 0.5);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-.cp__knob--hue {
-  top: 50%;
-  background: var(--hue);
-}
-
-.cp__row {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-}
-
-.cp__preview {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--r-sm);
-  background: var(--color);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
-}
-
-.cp .num--hex {
-  flex: 1;
-}
-
 /* Small icon buttons */
 .icon-btn {
   display: grid;
@@ -300,28 +218,6 @@
 .icon-btn.is-armed {
   background: var(--danger);
   color: #fff;
-}
-
-/* Modal overlay variant */
-.overlay--fixed {
-  position: fixed;
-  z-index: 50;
-}
-
-.dialog--wide {
-  width: min(720px, calc(100% - 32px));
-}
-
-.dialog__actions--row {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.dialog__actions--row kbd {
-  margin-left: var(--s-1);
-  background: rgb(0 0 0 / 0.15);
-  box-shadow: none;
-  color: inherit;
 }
 
 .field-msg {

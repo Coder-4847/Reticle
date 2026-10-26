@@ -16,5 +16,6 @@ export function createFlick(game) {
     },
     shot: (x, y, t) => field.clickShot(x, y, t, ref),
     draw: (ctx, t) => field.draw(ctx, t),
+    onResize: () => field.clampAll(),
   };
 }

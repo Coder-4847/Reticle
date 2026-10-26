@@ -114,6 +114,7 @@ export function createResultsScreen(el, app) {
 
   return {
     el,
+    retry: () => run && app.go('play', { mode: run.mode }),
     focusTarget: el.querySelector('[data-action="retry"]'),
     async enter({ run: r, expand = false, from = null } = {}) {
       if (r) return show(r, { expand, from });

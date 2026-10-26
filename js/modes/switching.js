@@ -18,6 +18,16 @@ export function createSwitching(game) {
   let actId = -1;
   let nextAct = 0;
 
+  const ring = { start: 0, life: c.lifetime };
+  const style = {
+    colorOf: (tg) => (tg === active ? game.look.color : INACTIVE),
+    ringOf: (tg) => {
+      if (tg !== active || !c.lifetime) return null;
+      ring.start = since;
+      return ring;
+    },
+  };
+
   function activate(t, exclude) {
     const options = field.live.filter((tg) => tg !== exclude);
     if (!options.length) { active = null; return; }
@@ -65,10 +75,8 @@ export function createSwitching(game) {
       return { hit: false, pts: MISS_POINTS };
     },
     draw(ctx, t) {
-      field.draw(ctx, t, {
-        colorOf: (tg) => (tg === active ? game.look.color : INACTIVE),
-        ringOf: (tg) => (tg === active && c.lifetime ? { start: since, life: c.lifetime } : null),
-      });
+      field.draw(ctx, t, style);
     },
+    onResize: () => field.clampAll(),
   };
 }

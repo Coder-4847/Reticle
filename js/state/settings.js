@@ -3,7 +3,7 @@ const KEY = 'reticle.settings';
 export const SCHEMA_VERSION = 2;
 
 export const DEFAULTS = {
-  ui: { accent: '#4f8dff', animations: 'system' },
+  ui: { accent: '#4f8dff', animations: 'system', fps: false },
   run: { mode: 'flick', duration: 30 },
   modes: {
     flick: { preset: 'standard', size: 28, lifetime: 1600, spawnDelay: 0, count: 1, speed: 0, area: 'full' },
@@ -26,6 +26,10 @@ export const DEFAULTS = {
   background: {
     type: 'solid', color: '#0b0c0f', color2: '#1a2233', gridSpacing: 48, gridOpacity: 0.06,
     vignette: false, imageDim: 0.5, brightness: 1,
+  },
+  effects: {
+    spawnPop: true, hitBurst: true, fragments: true, clickPing: true, missRipple: true,
+    streak: true, screenShake: false, timerBar: true,
   },
   audio: { master: 0.5, hit: 0.8, miss: 0.6, spawn: 0.25, countdown: 0.7, hitTimbre: 'click' },
 };

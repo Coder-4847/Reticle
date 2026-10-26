@@ -1,0 +1,291 @@
+/* Color picker popover */
+.cp {
+  position: fixed;
+  z-index: 60;
+  display: grid;
+  gap: var(--s-3);
+  width: 232px;
+  padding: var(--s-3);
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow-3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px) scale(0.98);
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out),
+    visibility 0s linear var(--dur-2);
+}
+
+.cp.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+
+.cp__sv,
+.cp__hue {
+  position: relative;
+  border-radius: var(--r-sm);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.cp__sv {
+  height: 140px;
+  background:
+    linear-gradient(to top, #000, transparent),
+    linear-gradient(to right, #fff, transparent),
+    var(--hue);
+}
+
+.cp__hue {
+  height: 12px;
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+}
+
+.cp__knob {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color);
+  box-shadow: 0 0 0 2px #fff, 0 1px 4px rgb(0 0 0 / 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cp__knob--hue {
+  top: 50%;
+  background: var(--hue);
+}
+
+.cp__row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.cp__preview {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  background: var(--color);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+}
+
+.cp .num--hex {
+  flex: 1;
+}
+
+/* Modal overlay variant */
+.overlay--fixed {
+  position: fixed;
+  z-index: 50;
+}
+
+.dialog--wide {
+  width: min(720px, calc(100% - 32px));
+}
+
+.dialog__actions--row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialog__actions--row kbd {
+  margin-left: var(--s-1);
+  background: rgb(0 0 0 / 0.15);
+  box-shadow: none;
+  color: inherit;
+}
+
+/* Toasts */
+.toasts {
+  position: fixed;
+  bottom: var(--s-5);
+  left: 50%;
+  z-index: 80;
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.toast {
+  max-width: min(440px, calc(100vw - 32px));
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--bg-4);
+  box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow-2);
+  color: var(--text-0);
+  font-size: var(--fs-sm);
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-3) var(--ease-spring);
+}
+
+.toast.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.toast.is-out {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.toast--ok {
+  box-shadow: inset 3px 0 0 var(--success), inset 0 0 0 1px var(--line-2), var(--shadow-2);
+}
+
+.toast--error {
+  box-shadow: inset 3px 0 0 var(--danger), inset 0 0 0 1px var(--line-2), var(--shadow-2);
+}
+
+/* Menu (profile switcher) */
+.profile-menu {
+  position: relative;
+}
+
+.menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 34px;
+  max-width: 200px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--bg-2);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  font-weight: 540;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.menu-btn:hover,
+.menu-btn[aria-expanded="true"] {
+  background: var(--bg-3);
+  color: var(--text-0);
+}
+
+.menu-btn__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  min-width: 220px;
+  padding: var(--s-1);
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow-3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px) scale(0.98);
+  transform-origin: top right;
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-2) var(--ease-out),
+    visibility 0s linear var(--dur-2);
+}
+
+.menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+
+.menu__title {
+  padding: var(--s-2) var(--s-3) var(--s-1);
+  color: var(--text-2);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+  height: 34px;
+  padding: 0 var(--s-3) 0 var(--s-2);
+  border-radius: var(--r-sm);
+  color: var(--text-1);
+  font-size: var(--fs-sm);
+  text-align: left;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.menu__item:hover,
+.menu__item:focus-visible {
+  background: var(--bg-3);
+  color: var(--text-0);
+  outline: none;
+}
+
+.menu__item[aria-checked="true"] {
+  color: var(--text-0);
+}
+
+.menu__check {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  color: var(--accent);
+}
+
+.menu__check svg {
+  width: 14px;
+  height: 14px;
+}
+
+.menu__sep {
+  height: 1px;
+  margin: var(--s-1) var(--s-2);
+  background: var(--line-1);
+}
+
+/* Environment notice */
+.notice {
+  position: fixed;
+  left: 50%;
+  bottom: var(--s-4);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: min(560px, calc(100vw - 24px));
+  padding: var(--s-3) var(--s-3) var(--s-3) var(--s-4);
+  border-radius: var(--r-lg);
+  background: var(--bg-3);
+  box-shadow: inset 3px 0 0 var(--warning), inset 0 0 0 1px var(--line-2), var(--shadow-3);
+  color: var(--text-0);
+  font-size: var(--fs-sm);
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out);
+}
+
+.notice.is-in {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.notice p {
+  flex: 1;
+}

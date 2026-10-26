@@ -21,6 +21,13 @@ export const SECTIONS = [
         options: [{ value: 'system', label: 'System' }, { value: 'full', label: 'Full' }, { value: 'reduced', label: 'Reduced' }, { value: 'off', label: 'Off' }],
       },
       { type: 'segmented', path: 'run.duration', label: 'Run duration', hint: 'Length of a timed run.', options: DURATIONS },
+      { type: 'switch', path: 'ui.fps', label: 'FPS counter', hint: 'Show frames per second during runs.' },
+    ],
+  },
+  {
+    id: 'profiles', title: 'Profiles', reset: [],
+    rows: [
+      { type: 'custom', id: 'profiles', label: 'Your profiles', hint: 'A profile stores your crosshair, pointer, trail, background, targets, effects and audio. The active profile saves changes automatically.', block: true },
     ],
   },
   {
@@ -94,6 +101,7 @@ export const SECTIONS = [
     id: 'targets', title: 'Targets', reset: ['targets'],
     rows: [
       { type: 'custom', id: 'shapes', label: 'Shape', block: true },
+      { type: 'custom', id: 'cbPresets', label: 'Colorblind-safe presets', hint: 'Okabe–Ito color pairs for the target and its hit flash.', block: true },
       { type: 'segmented', path: 'targets.colorMode', label: 'Colors', options: [{ value: 'single', label: 'Single' }, { value: 'states', label: 'Per state' }] },
       { type: 'color', path: 'targets.color', label: 'Target color', swatches: TARGET_COLORS, block: true },
       { type: 'color', path: 'targets.hitColor', label: 'Hit flash color', swatches: TARGET_COLORS, block: true, when: (g) => g('targets.colorMode') === 'states' },
@@ -102,6 +110,19 @@ export const SECTIONS = [
       { type: 'slider', path: 'targets.opacity', label: 'Opacity', ...pct, min: 0.2 },
       { type: 'slider', path: 'targets.sizeVariation', label: 'Random size variation', hint: 'Each target is up to this much larger or smaller.', ...pct, max: 0.5 },
       { type: 'switch', path: 'targets.randomRotation', label: 'Random rotation' },
+    ],
+  },
+  {
+    id: 'effects', title: 'Effects', reset: ['effects'],
+    rows: [
+      { type: 'switch', path: 'effects.spawnPop', label: 'Spawn pop', hint: 'Targets scale in with a small overshoot.' },
+      { type: 'switch', path: 'effects.hitBurst', label: 'Hit burst', hint: 'Particles when a target is hit.' },
+      { type: 'switch', path: 'effects.fragments', label: 'Shape fragments', hint: 'Small pieces in the shape of the target fly off on a hit.' },
+      { type: 'switch', path: 'effects.clickPing', label: 'Click ping', hint: 'A thin ring where you click.' },
+      { type: 'switch', path: 'effects.missRipple', label: 'Miss ripple', hint: 'A red ripple where a shot misses.' },
+      { type: 'switch', path: 'effects.streak', label: 'Streak counter', hint: 'Shows consecutive hits under the HUD.' },
+      { type: 'switch', path: 'effects.screenShake', label: 'Screen shake on miss', hint: 'A very small shake. Off by default.' },
+      { type: 'switch', path: 'effects.timerBar', label: 'Timer bar', hint: 'The progress bar along the top edge.' },
     ],
   },
   {

@@ -1,0 +1,149 @@
+/* Onboarding */
+.onboarding {
+  width: min(460px, calc(100vw - 96px));
+}
+
+.dialog:has(.onboarding) {
+  width: auto;
+}
+
+.onboarding__steps {
+  display: flex;
+  gap: 6px;
+  margin-bottom: var(--s-5);
+}
+
+.onboarding__steps i {
+  height: 4px;
+  flex: 1;
+  border-radius: var(--r-pill);
+  background: var(--bg-4);
+  transition: background-color var(--dur-3) var(--ease-out);
+}
+
+.onboarding__steps i.is-on {
+  background: var(--accent);
+}
+
+.onboarding__stage {
+  min-height: 210px;
+}
+
+.onboarding__step.is-entering {
+  animation: step-in var(--dur-3) var(--ease-out);
+}
+
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(calc(var(--slide) * 1.6)); }
+}
+
+.onboarding__logo {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--s-4);
+  border-radius: var(--r-lg);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.onboarding__logo svg {
+  width: 30px;
+  height: 30px;
+}
+
+.onboarding .swatches,
+.xh-picks {
+  margin-top: var(--s-5);
+}
+
+.swatches--lg .swatch {
+  width: 40px;
+  height: 40px;
+}
+
+.xh-picks {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-2);
+}
+
+.xh-pick {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-2);
+  border-radius: var(--r-md);
+  background: var(--bg-1);
+  box-shadow: inset 0 0 0 1px var(--line-1);
+  color: var(--text-1);
+  font-size: var(--fs-xs);
+  transition: background-color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out);
+}
+
+.xh-pick:hover {
+  background: var(--bg-3);
+}
+
+.xh-pick:active {
+  transform: scale(0.97);
+}
+
+.xh-pick[aria-checked="true"] {
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+  color: var(--text-0);
+}
+
+.xh-pick canvas {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-sm);
+  background: #0b0c0f;
+}
+
+.onboarding__foot {
+  margin-top: var(--s-5);
+}
+
+.onboarding__foot [data-act="skip"] {
+  margin-right: auto;
+}
+
+/* Shortcut cheat sheet */
+.cheatsheet {
+  width: min(420px, calc(100vw - 96px));
+}
+
+.dialog:has(.cheatsheet) {
+  width: auto;
+}
+
+.cheatsheet__list {
+  display: grid;
+  gap: 2px;
+  margin: var(--s-4) 0 0;
+}
+
+.cheatsheet__list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--line-1);
+  font-size: var(--fs-sm);
+}
+
+.cheatsheet__list dt {
+  display: flex;
+  gap: 4px;
+  flex: none;
+}
+
+.cheatsheet__list dd {
+  margin: 0;
+  color: var(--text-1);
+  text-align: right;
+}

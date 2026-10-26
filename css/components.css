@@ -262,3 +262,32 @@
   gap: var(--s-2);
   margin-top: var(--s-5);
 }
+
+.badge--accent {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Shared press feedback for compact controls */
+.nav__item,
+.settings__tab,
+.segmented__opt,
+.menu__item,
+.menu-btn,
+.swatch,
+.icon-btn {
+  transition-property: background-color, color, box-shadow, transform;
+}
+
+.nav__item:active,
+.settings__tab:active,
+.segmented__opt:active,
+.menu__item:active,
+.menu-btn:active,
+.icon-btn:active {
+  transform: scale(0.96);
+}
+
+.swatch:active {
+  transform: scale(0.92);
+}

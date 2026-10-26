@@ -85,7 +85,7 @@ export function heatmap(canvas, { hits, misses, aspect, delay = 0 }) {
     if (!nh && !nm) return tip.hide();
     tip.show(mx, my, { title: 'Near this spot', rows: [{ color: SERIES[0], value: String(nh), label: nh === 1 ? 'hit' : 'hits' }, { color: SERIES[1], value: String(nm), label: nm === 1 ? 'miss' : 'misses' }] });
   });
-  animateIn(draw, { delay, duration: 900 });
+  animateIn(draw, { delay, duration: 900, canvas });
 }
 
 /** Where on the target hits land. offsets in target radii; mean marked with a cross. */
@@ -140,7 +140,7 @@ export function precisionPlot(canvas, { offsets, mean, delay = 0 }) {
       rows: [{ value: `${Math.abs(x).toFixed(2)}r`, label: x >= 0 ? 'right' : 'left' }, { value: `${Math.abs(y).toFixed(2)}r`, label: y >= 0 ? 'low' : 'high' }],
     });
   });
-  animateIn(draw, { delay, duration: 900 });
+  animateIn(draw, { delay, duration: 900, canvas });
 }
 
 const REGION_NAMES = ['Top left', 'Top', 'Top right', 'Left', 'Center', 'Right', 'Bottom left', 'Bottom', 'Bottom right'];
@@ -187,7 +187,7 @@ export function regionGrid(canvas, { cells, aspect, delay = 0 }) {
     const c = cells[row * 3 + col];
     tip.show(mx, my, { title: REGION_NAMES[row * 3 + col], rows: c.total ? [{ value: `${Math.round((c.hits / c.total) * 100)}%`, label: `${c.hits} of ${c.total} targets hit` }] : [{ value: 'No targets' }] });
   });
-  animateIn(draw, { delay, duration: 700 });
+  animateIn(draw, { delay, duration: 700, canvas });
 }
 
 const DAY = 86400000;
@@ -255,5 +255,5 @@ export function calendar(canvas, { counts }) {
     const n = counts.get(dayKey(date)) ?? 0;
     tip.show(mx, my, { title: date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }), rows: [{ value: String(n), label: n === 1 ? 'run' : 'runs' }] });
   });
-  animateIn(draw, { duration: 700 });
+  animateIn(draw, { duration: 700, canvas });
 }

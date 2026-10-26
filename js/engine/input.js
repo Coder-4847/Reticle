@@ -28,7 +28,9 @@ export function createInput(el) {
     state.y = e.clientY - rect.top;
   }
 
-  el.addEventListener('pointermove', (e) => {
+  // pointerrawupdate (Chromium, secure contexts) arrives without waiting for the next frame.
+  const MOVE = 'onpointerrawupdate' in el ? 'pointerrawupdate' : 'pointermove';
+  el.addEventListener(MOVE, (e) => {
     refreshRect();
     state.inside = true;
     if (!useDelta() || needsSync) {

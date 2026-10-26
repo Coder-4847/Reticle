@@ -2,6 +2,7 @@ import { settings } from '../state/settings.js';
 import { listRuns, importRuns, clearRuns } from '../state/store.js';
 import { shapeStore } from '../targets/shapeStore.js';
 import { backgroundImage } from '../ui/backgrounds.js';
+import { profiles } from '../state/profiles.js';
 
 const FORMAT = 'reticle-export';
 const FORMAT_VERSION = 1;
@@ -27,6 +28,7 @@ export async function buildExport() {
     exportedAt: new Date().toISOString(),
     settings: settings.snapshot(),
     shapes: shapeStore.list(),
+    profiles: profiles.exportState(),
     runs: await listRuns(),
   };
 }
@@ -44,6 +46,7 @@ export async function importData(data) {
   if (!data || data.format !== FORMAT || !Array.isArray(data.runs)) throw new Error('This is not a Reticle backup file.');
   if (data.settings) settings.replaceAll(data.settings);
   if (Array.isArray(data.shapes)) shapeStore.replaceAll(data.shapes);
+  if (data.profiles) profiles.importState(data.profiles);
   return importRuns(data.runs);
 }
 
@@ -80,5 +83,6 @@ export async function clearAll({ everything = false } = {}) {
   if (!everything) return;
   settings.replaceAll({});
   shapeStore.replaceAll([]);
+  profiles.reset();
   await backgroundImage.clear();
 }

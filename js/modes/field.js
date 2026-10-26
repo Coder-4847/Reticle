@@ -7,6 +7,8 @@ const SPAWN_MS = 220;
 const HIT_MS = 170;
 const EXPIRE_MS = 260;
 const OVERSHOOT = 1.5;
+const NO_STYLE = {};
+const ownRing = { start: 0, life: 0 }; // reused each frame
 const TAU = Math.PI * 2;
 
 /**
@@ -111,7 +113,18 @@ export function createField(game, opts) {
 
   // Visual scale during the spawn pop. Never below 1 for hit testing: the full target always counts,
   // and while the overshoot draws it larger, the larger area counts too.
-  const spawnScale = (tg, t) => (game.motion === 'full' ? easeOutBack(clamp((t - tg.spawn) / SPAWN_MS, 0, 1), OVERSHOOT) : 1);
+  const pop = game.motion === 'full' && game.effects?.spawnPop !== false;
+  const spawnScale = (tg, t) => (pop ? easeOutBack(clamp((t - tg.spawn) / SPAWN_MS, 0, 1), OVERSHOOT) : 1);
+
+  /** Keep every target inside the (possibly resized) play area. */
+  field.clampAll = () => {
+    const a = game.area();
+    for (const tg of live) {
+      const pad = reachOf(tg.r);
+      tg.x = clamp(tg.x, a.x + pad, Math.max(a.x + pad, a.x + a.w - pad));
+      tg.y = clamp(tg.y, a.y + pad, Math.max(a.y + pad, a.y + a.h - pad));
+    }
+  };
 
   /** Topmost live target under (x, y) that already existed at time t. */
   field.hitTest = (x, y, t) => {
@@ -140,7 +153,7 @@ export function createField(game, opts) {
     lastHitT = t;
     if (opts.record !== false) game.recorder.targetHit(tg.id, t, x, y, dist, rt, tg.x, tg.y);
     remove(tg, 'hit', t);
-    game.burst(tg.x, tg.y, look.hitColor);
+    game.burst(tg.x, tg.y, look.hitColor, tg.r);
     return { rt, dist };
   };
 
@@ -162,7 +175,7 @@ export function createField(game, opts) {
   };
 
   /** style: { colorOf(tg), ringOf(tg) -> { start, life } | null } */
-  field.draw = (ctx, t, style = {}) => {
+  field.draw = (ctx, t, style = NO_STYLE) => {
     for (let i = fading.length - 1; i >= 0; i--) {
       const f = fading[i];
       const k = (t - f.t) / (f.kind === 'hit' ? HIT_MS : EXPIRE_MS);
@@ -178,7 +191,13 @@ export function createField(game, opts) {
       const alpha = game.motion === 'reduced' ? clamp(age / SPAWN_MS, 0, 1) : 1;
       const color = style.colorOf ? style.colorOf(tg) : look.color;
       drawTarget(ctx, look, tg.x, tg.y, tg.r, tg.rot, scale, alpha, color);
-      const ring = style.ringOf ? style.ringOf(tg) : tg.life ? { start: tg.spawn, life: tg.life } : null;
+      let ring = null;
+      if (style.ringOf) ring = style.ringOf(tg);
+      else if (tg.life) {
+        ownRing.start = tg.spawn;
+        ownRing.life = tg.life;
+        ring = ownRing;
+      }
       if (ring) {
         const remaining = 1 - clamp((t - ring.start) / ring.life, 0, 1);
         ctx.globalAlpha = alpha * 0.35;

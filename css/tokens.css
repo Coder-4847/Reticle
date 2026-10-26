@@ -18,7 +18,7 @@
 
   --text-0: #eef1f4;
   --text-1: #a6adb6;
-  --text-2: #6b727c;
+  --text-2: #8e959f; /* >= 4.5:1 on every surface up to --bg-4 */
 
   /* Accent is overwritten at runtime from settings */
   --accent: #4f8dff;

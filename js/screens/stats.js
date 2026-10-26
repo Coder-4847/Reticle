@@ -156,8 +156,8 @@ export function createStatsScreen(el, app) {
       <section class="report-card report-card--wide">
         <header class="report-card__head report-card__head--row"><div><h3>Run history</h3><p>${runs.length} ${runs.length === 1 ? 'run' : 'runs'}. Select one for its full report.</p></div><div class="report-card__tools" data-v="sort"></div></header>
         <ul class="run-list">
-          ${sorted.slice(0, view.shown).map((r) => `
-            <li><button type="button" class="run-item" data-id="${escapeHtml(r.id)}">
+          ${sorted.slice(0, view.shown).map((r, i) => `
+            <li style="--i:${i}"><button type="button" class="run-item" data-id="${escapeHtml(r.id)}">
               <span class="run-item__mode"><i style="background:${modeColor(r.mode)}"></i>${modeName(r.mode)}<span class="run-item__dim">${cap(r.summary.preset)}</span></span>
               <span class="run-item__dim">${fmtDate(r.timestamp)}</span>
               <span class="is-num">${r.mode === 'tracking' ? `${r.summary.score.toFixed(1)}%` : Math.round(r.summary.score).toLocaleString()}</span>
@@ -168,6 +168,7 @@ export function createStatsScreen(el, app) {
         ${sorted.length > view.shown ? `<button type="button" class="btn btn--sm btn--ghost show-more" data-act="more">Show ${Math.min(PAGE, sorted.length - view.shown)} more</button>` : ''}
       </section>`;
 
+    body.querySelectorAll('.totals .stat').forEach((t, i) => t.style.setProperty('--i', i));
     const metricCtl = createSegmented({ label: 'Metric', value: view.metric, options: Object.entries(METRICS).map(([value, m]) => ({ value, label: m.label })), onChange: (v) => { view.metric = v; render(); } });
     body.querySelector('[data-v="metric"]').append(metricCtl.el);
     const rollingCtl = createSwitch({ label: 'Rolling average', value: view.rolling, onChange: (v) => { view.rolling = v; render(); } });

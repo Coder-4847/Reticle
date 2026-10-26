@@ -62,6 +62,20 @@
   background: var(--bg-3);
 }
 
+.run-item:active {
+  transform: scale(0.995);
+}
+
+.run-list li {
+  animation: row-in var(--dur-3) var(--ease-out) both;
+  animation-delay: calc(min(var(--i, 0), 12) * 25ms);
+}
+
+.totals .stat {
+  animation: card-in var(--dur-4) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
 .run-item .is-num {
   text-align: right;
 }
