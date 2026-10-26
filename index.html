@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" data-motion="full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reticle — Aim Trainer</title>
+    <meta name="description" content="A professional aim and reflex trainer that runs entirely in your browser." />
+    <meta name="theme-color" content="#08090b" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f8dff' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='8'/%3E%3Cpath d='M12 2v5M12 17v5M2 12h5M17 12h5'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/screens.css" />
+  </head>
+  <body data-screen="home">
+    <header class="topbar">
+      <button class="brand" data-nav="home" aria-label="Reticle home">
+        <span data-icon="logo"></span>RETICLE
+      </button>
+      <nav class="nav" aria-label="Main">
+        <button class="nav__item" data-nav="home"><span data-icon="home"></span><span>Home</span></button>
+        <button class="nav__item" data-nav="stats"><span data-icon="stats"></span><span>Stats</span></button>
+        <button class="nav__item" data-nav="settings"><span data-icon="sliders"></span><span>Settings</span></button>
+      </nav>
+    </header>
+
+    <main class="screens">
+      <!-- Home -->
+      <section class="screen" data-screen="home" aria-label="Home" tabindex="-1">
+        <div class="page">
+          <div class="home__hero">
+            <p class="eyebrow">Aim &amp; reflex trainer</p>
+            <h1 class="home__title">Sharpen every <span class="accent">click</span>.</h1>
+            <p class="home__lede">Precision drills, deep customization and run-by-run analytics. Runs entirely in your browser.</p>
+            <div class="home__actions">
+              <button class="btn btn--primary btn--lg" data-action="quick-start">
+                <span data-icon="play"></span>Quick start
+              </button>
+              <div class="field-inline">
+                <span>Duration</span>
+                <div data-duration></div>
+              </div>
+            </div>
+          </div>
+          <h2 class="section-title">Modes</h2>
+          <div class="mode-grid" data-mode-grid></div>
+        </div>
+      </section>
+
+      <!-- Play -->
+      <section class="screen screen--play" data-screen="play" aria-label="Training run" tabindex="-1">
+        <canvas class="play__canvas" aria-label="Play area"></canvas>
+        <div class="hud" data-hud>
+          <div class="hud__bar"><span class="hud__bar-fill" data-hud-el="bar"></span></div>
+          <div class="hud__row">
+            <div class="hud__stat"><span class="hud__label">Score</span><span class="hud__value" data-hud-el="score">0</span></div>
+            <div class="hud__stat"><span class="hud__label">Hits</span><span class="hud__value" data-hud-el="hits">0</span></div>
+            <div class="hud__stat hud__stat--time"><span class="hud__label">Time</span><span class="hud__value" data-hud-el="time">0.0</span></div>
+            <div class="hud__stat"><span class="hud__label">Accuracy</span><span class="hud__value" data-hud-el="acc">—</span></div>
+            <div class="hud__stat"><span class="hud__label">Misses</span><span class="hud__value" data-hud-el="misses">0</span></div>
+          </div>
+        </div>
+        <div class="countdown" data-countdown aria-live="assertive"></div>
+        <p class="play__hint"><kbd>Esc</kbd> pause</p>
+        <div class="overlay" data-pause>
+          <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+            <h2 class="dialog__title" id="pause-title">Paused</h2>
+            <p class="dialog__sub">Press <kbd>Esc</kbd> to resume.</p>
+            <div class="dialog__actions">
+              <button class="btn btn--primary btn--block" data-action="resume">Resume</button>
+              <button class="btn btn--block" data-action="restart"><span data-icon="retry"></span>Restart</button>
+              <button class="btn btn--ghost btn--block" data-action="quit">Quit to home</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results -->
+      <section class="screen" data-screen="results" aria-label="Results" tabindex="-1">
+        <div class="results">
+          <header class="results__head">
+            <p class="eyebrow" data-r="meta"></p>
+            <h1 class="results__title">Run complete</h1>
+          </header>
+          <div class="card results__card">
+            <div class="results__score">
+              <span class="eyebrow">Score</span>
+              <span class="results__score-value" data-r="score">0</span>
+            </div>
+            <div class="stat-grid">
+              <div class="stat"><span class="stat__label">Accuracy</span><span class="stat__value"><span data-r="accuracy">0</span><span class="stat__unit">%</span></span></div>
+              <div class="stat"><span class="stat__label">Avg reaction</span><span class="stat__value"><span data-r="avgRT">0</span><span class="stat__unit">ms</span></span></div>
+              <div class="stat"><span class="stat__label">Hits</span><span class="stat__value" data-r="hits">0</span></div>
+              <div class="stat"><span class="stat__label">Misses</span><span class="stat__value" data-r="misses">0</span></div>
+              <div class="stat"><span class="stat__label">Missed targets</span><span class="stat__value" data-r="expired">0</span></div>
+              <div class="stat"><span class="stat__label">Shots</span><span class="stat__value" data-r="shots">0</span></div>
+            </div>
+          </div>
+          <div class="results__actions">
+            <button class="btn btn--primary btn--lg" data-action="retry"><span data-icon="retry"></span>Retry</button>
+            <button class="btn btn--lg" data-action="home">Home</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="screen" data-screen="settings" aria-label="Settings" tabindex="-1">
+        <div class="page">
+          <header class="page__head">
+            <h1 class="page__title">Settings</h1>
+            <p class="page__sub">Changes save automatically.</p>
+          </header>
+          <div class="settings" data-settings></div>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="screen" data-screen="stats" aria-label="Statistics" tabindex="-1">
+        <div class="page">
+          <header class="page__head">
+            <h1 class="page__title">Statistics</h1>
+            <p class="page__sub">Your recent runs, stored on this device.</p>
+          </header>
+          <div data-stats></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

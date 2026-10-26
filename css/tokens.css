@@ -1,0 +1,94 @@
+/* Design tokens. Every color, radius, spacing step, and motion value lives here. */
+:root {
+  color-scheme: dark;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  /* Surfaces, darkest to lightest */
+  --bg-0: #08090b;
+  --bg-1: #0d0f12;
+  --bg-2: #13161a;
+  --bg-3: #1a1e23;
+  --bg-4: #232830;
+
+  --line-1: rgb(255 255 255 / 0.06);
+  --line-2: rgb(255 255 255 / 0.1);
+  --line-3: rgb(255 255 255 / 0.16);
+
+  --text-0: #eef1f4;
+  --text-1: #a6adb6;
+  --text-2: #6b727c;
+
+  /* Accent is overwritten at runtime from settings */
+  --accent: #4f8dff;
+  --accent-ink: #ffffff;
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+  --accent-line: color-mix(in srgb, var(--accent) 45%, transparent);
+
+  --success: #38d996;
+  --danger: #ff5d6c;
+  --warning: #ffb547;
+
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 999px;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+
+  --fs-2xs: 10px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+  --fs-2xl: 36px;
+  --fs-3xl: clamp(40px, 6vw, 64px);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 600ms;
+  --slide: 10px;
+  --lift: -2px;
+
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 10px 30px rgb(0 0 0 / 0.35);
+  --shadow-3: 0 24px 64px rgb(0 0 0 / 0.55);
+
+  --topbar-h: 64px;
+  --content-w: 1120px;
+}
+
+:root[data-motion="reduced"] {
+  --dur-1: 60ms;
+  --dur-2: 100ms;
+  --dur-3: 140ms;
+  --dur-4: 200ms;
+  --slide: 0px;
+  --lift: 0px;
+}
+
+:root[data-motion="off"] {
+  --dur-1: 0ms;
+  --dur-2: 0ms;
+  --dur-3: 0ms;
+  --dur-4: 0ms;
+  --slide: 0px;
+  --lift: 0px;
+}
